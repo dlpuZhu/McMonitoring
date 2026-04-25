@@ -1,0 +1,137 @@
+{
+  "id": null,
+  "uid": "connector-service-health",
+  "title": "Connector Service Health",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "10s",
+  "tags": ["connector", "monitoring"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Connector Jobs by Status",
+      "type": "barchart",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "connector-monitor-mysql",
+            "name": "connector-monitor-mysql"
+          },
+          "rawSql": "SELECT Status AS metric, COUNT(*) AS value FROM ConnectorJobs GROUP BY Status;",
+          "format": "table"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Failed Jobs by Connector Type",
+      "type": "barchart",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "connector-monitor-mysql",
+            "name": "connector-monitor-mysql"
+          },
+          "rawSql": "SELECT ConnectorType AS metric, COUNT(*) AS value FROM ConnectorJobs WHERE Status='Failed' GROUP BY ConnectorType;",
+          "format": "table"
+        }
+      ],
+      "alert": {
+        "name": "HighFailureRate",
+        "condition": "WHEN count() > 10",
+        "frequency": "1m",
+        "severity": "critical"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Regional Failure Rate",
+      "type": "stat",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "connector-monitor-mysql",
+            "name": "connector-monitor-mysql"
+          },
+          "rawSql": "SELECT Region AS metric, 100.0 * SUM(Status='Failed') / COUNT(*) AS value FROM ConnectorJobs GROUP BY Region;",
+          "format": "table"
+        }
+      ],
+      "alert": {
+        "name": "RegionalFailureSpike",
+        "condition": "WHEN avg() > 20",
+        "frequency": "5m",
+        "severity": "warning"
+      }
+    },
+    {
+      "id": 4,
+      "title": "Active Jobs and Error Count",
+      "type": "timeseries",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "connector-monitor-mysql",
+            "name": "connector-monitor-mysql"
+          },
+          "rawSql": "SELECT CreatedTime AS time, Status AS metric, COUNT(*) AS value FROM ConnectorJobs WHERE Status='Running' GROUP BY CreatedTime, Status ORDER BY CreatedTime;",
+          "format": "time_series"
+        }
+      ],
+      "alert": {
+        "name": "NoActiveJobs",
+        "condition": "WHEN count() = 0",
+        "frequency": "2m",
+        "severity": "critical"
+      }
+    },
+    {
+      "id": 5,
+      "title": "Job Duration Distribution",
+      "type": "table",
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "mysql",
+            "uid": "connector-monitor-mysql",
+            "name": "connector-monitor-mysql"
+          },
+          "rawSql": "SELECT Status, AVG(DurationSeconds) AS avg_duration, MAX(DurationSeconds) AS max_duration FROM ConnectorJobs GROUP BY Status;",
+          "format": "table"
+        }
+      ],
+      "alert": {
+        "name": "SlowCompletion",
+        "condition": "WHEN avg() > 600",
+        "frequency": "10m",
+        "severity": "warning"
+      }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "type": "datasource",
+        "name": "datasource",
+        "label": "Data Source",
+        "pluginId": "mysql",
+        "pluginName": "MySQL",
+        "query": "",
+        "current": {
+          "text": "connector-monitor-mysql",
+          "value": "connector-monitor-mysql"
+        }
+      }
+    ]
+  }
+}
