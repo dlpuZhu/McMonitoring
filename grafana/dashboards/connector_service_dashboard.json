@@ -1,137 +1,476 @@
 {
-  "id": null,
-  "uid": "connector-service-health",
-  "title": "Connector Service Health",
-  "schemaVersion": 38,
-  "version": 1,
-  "refresh": "10s",
-  "tags": ["connector", "monitoring"],
-  "timezone": "browser",
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
   "panels": [
     {
+      "datasource": {
+        "type": "mysql",
+        "uid": "connector-monitor-mysql"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 0,
+        "y": 0
+      },
       "id": 1,
-      "title": "Connector Jobs by Status",
-      "type": "barchart",
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
       "targets": [
         {
-          "refId": "A",
           "datasource": {
+            "name": "connector-monitor-mysql",
             "type": "mysql",
-            "uid": "connector-monitor-mysql",
-            "name": "connector-monitor-mysql"
+            "uid": "connector-monitor-mysql"
           },
+          "format": "table",
           "rawSql": "SELECT Status AS metric, COUNT(*) AS value FROM ConnectorJobs GROUP BY Status;",
-          "format": "table"
-        }
-      ]
-    },
-    {
-      "id": 2,
-      "title": "Failed Jobs by Connector Type",
-      "type": "barchart",
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "mysql",
-            "uid": "connector-monitor-mysql",
-            "name": "connector-monitor-mysql"
-          },
-          "rawSql": "SELECT ConnectorType AS metric, COUNT(*) AS value FROM ConnectorJobs WHERE Status='Failed' GROUP BY ConnectorType;",
-          "format": "table"
+          "refId": "A"
         }
       ],
+      "title": "Connector Jobs by Status",
+      "type": "barchart"
+    },
+    {
       "alert": {
-        "name": "HighFailureRate",
         "condition": "WHEN count() > 10",
         "frequency": "1m",
+        "name": "HighFailureRate",
         "severity": "critical"
-      }
-    },
-    {
-      "id": 3,
-      "title": "Regional Failure Rate",
-      "type": "stat",
+      },
+      "datasource": {
+        "type": "mysql",
+        "uid": "connector-monitor-mysql"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 7,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
       "targets": [
         {
-          "refId": "A",
           "datasource": {
+            "name": "connector-monitor-mysql",
             "type": "mysql",
-            "uid": "connector-monitor-mysql",
-            "name": "connector-monitor-mysql"
+            "uid": "connector-monitor-mysql"
           },
-          "rawSql": "SELECT Region AS metric, 100.0 * SUM(Status='Failed') / COUNT(*) AS value FROM ConnectorJobs GROUP BY Region;",
-          "format": "table"
+          "format": "table",
+          "rawSql": "SELECT ConnectorType AS metric, COUNT(*) AS value FROM ConnectorJobs WHERE Status='Failed' GROUP BY ConnectorType;",
+          "refId": "A"
         }
       ],
-      "alert": {
-        "name": "RegionalFailureSpike",
-        "condition": "WHEN avg() > 20",
-        "frequency": "5m",
-        "severity": "warning"
-      }
+      "title": "Failed Jobs by Connector Type",
+      "type": "barchart"
     },
     {
-      "id": 4,
-      "title": "Active Jobs and Error Count",
-      "type": "timeseries",
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "mysql",
-            "uid": "connector-monitor-mysql",
-            "name": "connector-monitor-mysql"
-          },
-          "rawSql": "SELECT CreatedTime AS time, Status AS metric, COUNT(*) AS value FROM ConnectorJobs WHERE Status='Running' GROUP BY CreatedTime, Status ORDER BY CreatedTime;",
-          "format": "time_series"
-        }
-      ],
       "alert": {
-        "name": "NoActiveJobs",
-        "condition": "WHEN count() = 0",
-        "frequency": "2m",
-        "severity": "critical"
-      }
-    },
-    {
-      "id": 5,
-      "title": "Job Duration Distribution",
-      "type": "table",
-      "targets": [
-        {
-          "refId": "A",
-          "datasource": {
-            "type": "mysql",
-            "uid": "connector-monitor-mysql",
-            "name": "connector-monitor-mysql"
-          },
-          "rawSql": "SELECT Status, AVG(DurationSeconds) AS avg_duration, MAX(DurationSeconds) AS max_duration FROM ConnectorJobs GROUP BY Status;",
-          "format": "table"
-        }
-      ],
-      "alert": {
-        "name": "SlowCompletion",
         "condition": "WHEN avg() > 600",
         "frequency": "10m",
+        "name": "SlowCompletion",
         "severity": "warning"
-      }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 14,
+        "y": 0
+      },
+      "id": 5,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "name": "connector-monitor-mysql",
+            "type": "mysql",
+            "uid": "connector-monitor-mysql"
+          },
+          "format": "table",
+          "rawSql": "SELECT Status, AVG(DurationSeconds) AS avg_duration, MAX(DurationSeconds) AS max_duration FROM ConnectorJobs GROUP BY Status;",
+          "refId": "A"
+        }
+      ],
+      "title": "Job Duration Distribution",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "mysql",
+        "uid": "connector-monitor-mysql"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 0,
+        "y": 6
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "name": "connector-monitor-mysql",
+            "type": "mysql",
+            "uid": "connector-monitor-mysql"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT CreatedTime AS time, Status AS metric, COUNT(*) AS value FROM ConnectorJobs WHERE Status='Running' GROUP BY CreatedTime, Status ORDER BY CreatedTime;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Active Jobs and Error Count",
+      "type": "table"
+    },
+    {
+      "alert": {
+        "condition": "WHEN avg() > 20",
+        "frequency": "5m",
+        "name": "RegionalFailureSpike",
+        "severity": "warning"
+      },
+      "datasource": {
+        "type": "mysql",
+        "uid": "connector-monitor-mysql"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 7,
+        "x": 7,
+        "y": 6
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "name": "connector-monitor-mysql",
+            "type": "mysql",
+            "uid": "connector-monitor-mysql"
+          },
+          "format": "table",
+          "rawSql": "SELECT Region AS metric, 100.0 * SUM(Status='Failed') / COUNT(*) AS value FROM ConnectorJobs GROUP BY Region;",
+          "refId": "A"
+        }
+      ],
+      "title": "Regional Failure Rate",
+      "type": "stat"
     }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "connector",
+    "monitoring"
   ],
   "templating": {
     "list": [
       {
-        "type": "datasource",
-        "name": "datasource",
+        "current": {
+          "selected": true,
+          "text": "No data sources found",
+          "value": ""
+        },
+        "hide": 0,
+        "includeAll": false,
         "label": "Data Source",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
         "pluginId": "mysql",
         "pluginName": "MySQL",
         "query": "",
-        "current": {
-          "text": "connector-monitor-mysql",
-          "value": "connector-monitor-mysql"
-        }
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
       }
     ]
-  }
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Connector Service Health",
+  "uid": "connector-service-health",
+  "version": 3,
+  "weekStart": ""
 }
