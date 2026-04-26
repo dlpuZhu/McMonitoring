@@ -79,6 +79,17 @@ python simulator/data_simulator.py --db-url mysql://grafana:grafana@127.0.0.1:33
 - `Job Duration Distribution`
   - 展示不同状态作业的平均/最大时长
 
+### 保持仪表盘方法
+
+1.在Grafana UI中导出仪表盘
+进入您修改的仪表盘
+选择 Save to file 下载JSON
+2.更新本地文件connector_service_dashboard.json
+3.重启Grafana容器使用新配置
+ ```bash
+ docker compose restart grafana
+ ```
+
 ## 5. 告警规则说明
 
 项目中的告警设计目标是捕获关键问题：
