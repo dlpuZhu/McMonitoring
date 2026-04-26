@@ -42,6 +42,86 @@ docker compose up -d
 python simulator/data_simulator.py --db-url mysql://grafana:grafana@127.0.0.1:3306/connector_monitor
 ```
 
+## 数据库表结构
+
+### ConnectorJobs 表
+
+```sql
+-- SQLite 版本
+CREATE TABLE IF NOT EXISTS ConnectorJobs (
+    JobId INTEGER PRIMARY KEY AUTOINCREMENT,
+    ConnectorType VARCHAR(50),
+    Region VARCHAR(50),
+    Status VARCHAR(20),
+    ErrorCode VARCHAR(20),
+    CreatedTime DATETIME,
+    LastUpdatedTime DATETIME,
+    DurationSeconds INT
+);
+
+-- MySQL 版本
+CREATE TABLE IF NOT EXISTS ConnectorJobs (
+    JobId INT PRIMARY KEY AUTO_INCREMENT,
+    ConnectorType VARCHAR(50),
+    Region VARCHAR(50),
+    Status VARCHAR(20),
+    ErrorCode VARCHAR(20),
+    CreatedTime DATETIME,
+    LastUpdatedTime DATETIME,
+    DurationSeconds INT
+);
+```
+
+**字段说明：**
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| JobId | INT | 主键，自动递增 |
+| ConnectorType | VARCHAR(50) | 连接器类型（SQLServer、PostgreSQL、CosmosDB、MongoDB、MySQL） |
+| Region | VARCHAR(50) | 地区（EastUS、WestEurope、SoutheastAsia、JapanEast） |
+| Status | VARCHAR(20) | 作业状态（Running、Failed、Creating、Paused、Completed） |
+| ErrorCode | VARCHAR(20) | 错误代码（E001、E002、E003、E004），失败时有值 |
+| CreatedTime | DATETIME | 作业创建时间 |
+| LastUpdatedTime | DATETIME | 最后更新时间 |
+| DurationSeconds | INT | 作业持续时间（秒） |
+
+### ConnectorJobMetrics 表
+
+```sql
+-- SQLite 版本
+CREATE TABLE IF NOT EXISTS ConnectorJobMetrics (
+    MetricsId INTEGER PRIMARY KEY AUTOINCREMENT,
+    JobId INTEGER,
+    ThroughputMbps REAL,
+    ErrorCount INT,
+    Retries INT,
+    LastHeartbeat DATETIME,
+    FOREIGN KEY(JobId) REFERENCES ConnectorJobs(JobId)
+);
+
+-- MySQL 版本
+CREATE TABLE IF NOT EXISTS ConnectorJobMetrics (
+    MetricsId INT PRIMARY KEY AUTO_INCREMENT,
+    JobId INT,
+    ThroughputMbps DOUBLE,
+    ErrorCount INT,
+    Retries INT,
+    LastHeartbeat DATETIME,
+    FOREIGN KEY(JobId) REFERENCES ConnectorJobs(JobId)
+);
+```
+
+**字段说明：**
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| MetricsId | INT | 主键，自动递增 |
+| JobId | INT | 外键，关联 ConnectorJobs 表 |
+| ThroughputMbps | FLOAT/DOUBLE | 吞吐量（Mbps） |
+| ErrorCount | INT | 错误计数 |
+| Retries | INT | 重试次数 |
+| LastHeartbeat | DATETIME | 最后心跳时间 |
+
 ## Grafana 仪表盘
 
 如果你使用 `docker compose`，Grafana 将在 `http://localhost:3000` 可访问，默认账号：
